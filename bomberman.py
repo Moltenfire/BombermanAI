@@ -101,7 +101,6 @@ class Bomberman:
 		
 	def registered(self, x):
 		self.inGame = True
-		self.ai = ai.AI(self.account, self.grid, self.playerInfo, self.bombs, self.rows, self.cols)
 	
 	def stop(self, x):
 		#reset everything and wait for next round
@@ -147,7 +146,7 @@ class Bomberman:
 				return 1
 		
 	def dropBomb(self, x):
-		self.bombs.append([x[0],x[1],4,self.bombNum])
+		self.bombs.append([x[0],x[1],5,self.bombNum])
 		self.bombNum += 1
 		
 	def updateBombs(self):
@@ -212,6 +211,7 @@ class Bomberman:
 	def createMap(self, x):
 		self.rows = int(x[1])
 		self.cols = int(x[2])
+		self.ai = ai.AI(self.account, self.grid, self.playerInfo, self.bombs, self.rows, self.cols)
 		for i in range(self.rows):
 			y = self.read_line().replace(" ", "|").replace("0", " ").replace("1", "+").replace("2", "#").split("|")
 			self.grid.append(y)
