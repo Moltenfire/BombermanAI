@@ -1,4 +1,4 @@
-import copy, random
+import copy, random, sys
 
 class AI:
 
@@ -10,64 +10,85 @@ class AI:
 		self.rows = rows
 		self.cols = cols
 		# Set current goal
+		# self.printMap()
 		
 	
 	def update(self, grid, players, bombs):
 		self.grid = copy.deepcopy(grid)
 		self.players = players
 		self.bombs = bombs
+		self.toExplode = set()
+		self.exploded = set()
 		
 		#Work out danger squares, moves to avoid this turn or have to take
 		
-		for i in self.bombs:
-			self.exploded = set()
-			if i[2] == 1 and i[3] not in self.exploded:
-				self.exploded.add(i[3])
+		for i in self.bombs:			
+			if i[2] == 1 and i[3] not in self.toExplode:
+				self.toExplode.add(i[3])
 				
-	# def explodeBomb(self, x):
-		# self.explode(x[0], x[1])
+		print self.bombs, self.toExplode
 		
-		# #Left
-		# for i in range(1,4):
-			# if self.explode(x[0], x[1]-i):
-				# break			
-		# #Right
-		# for i in range(1,4):
-			# if self.explode(x[0], x[1]+i):
-				# break
-		# #Up
-		# for i in range(1,4):
-			# if self.explode(x[0]-i, x[1]):
-				# break			
-		# #Down
-		# for i in range(1,4):
-			# if self.explode(x[0]+i, x[1]):
-				# break
+		while len(self.toExplode.difference(self.exploded)) != 0:
+			for i in self.toExplode.difference(self.exploded):
+				for j in self.bombs:
+					if i == j[3]:
+						print "Exploding: ", j
+						self.explodeBomb(j)
+						
+		self.printMap()
+										
+	def explodeBomb(self, x):
+		self.exploded.add(x[3])
+		
+		r = x[0]
+		c = x[1]
+	
+		self.explode(r, c)
+		
+		print "Before: ", self.grid[r][c]
+		self.grid[r][c] = "1"
+		print "After: ", self.grid[r][c]
+		
+		#Left
+		for i in range(1,4):
+			if self.explode(r, c-i):
+				break
+			else:
+				self.grid[r][c-i] = "1"
+		#Right
+		for i in range(1,4):
+			if self.explode(r, c+i):
+				break
+			else:
+				self.grid[r][c+i] = "1"
+		#Up
+		for i in range(1,4):
+			if self.explode(r-i, c):
+				break
+			else:
+				self.grid[r-i][c] = "1"
+		#Down
+		for i in range(1,4):
+			if self.explode(r+i, c):
+				break
+			else:
+				self.grid[r+i][c] = "1"
 				
-	# def explode(self, r, c):
+	def explode(self, r, c):
 		
-		# if r < 0 or r >= self.rows or c < 0 or c >= self.cols:
-			# return 1
+		if r < 0 or r >= self.rows or c < 0 or c >= self.cols:
+			return 1
 			
-		# for i in self.playerInfo:
-			# if self.playerInfo[i].position[0] == r and self.playerInfo[i].position[1] == c:
-				# self.playerInfo[i].kill()
-				# if self.playerInfo[i].name == self.account:
-					# self.inGame = False
-
-		# if self.grid[r][c] == " ":
-			# self.explosions.add((r,c))
-			# for i in self.bombs:
-				# if i[0] == r and i[1] == c:
-					# self.explodeBomb(i)
-					# break								
-			# return 0
-		# elif self.grid[r][c] == "+":
-			# self.explosions.add((r,c))
-			# self.grid[r][c] = " "
-			# return 1
-		# elif self.grid[r][c] == "#":
-			# return 1
+ 		if self.grid[r][c] == " ":
+			for i in self.bombs:
+				if i[0] == r and i[1] == c:
+					self.toExplode.add(i[3])
+			return 0
+		elif self.grid[r][c] == "+":
+			self.grid[r][c] = " "
+			return 1
+		elif self.grid[r][c] == "#":
+			return 1
 
 	
 	def getMove(self):
@@ -107,6 +128,8 @@ class AI:
 		elif c == (self.cols - 1):
 			directions.remove("RIGHT")
 			
+		print directions
+			
 		for i in directions:
 			if self.isLegal(i, r, c):
 				moves.append(i)
@@ -115,6 +138,7 @@ class AI:
 		return moves
 				
 	def isLegal(self, d, r, c):
+
 		if d == "LEFT":
 			if self.grid[r][c-1] == " ":
 				return 1
@@ -129,3 +153,24 @@ class AI:
 				return 1				
 			
 		return 0
+
+		
+	def printMap(self):
+		if self.grid != []:
+			g = copy.deepcopy(self.grid)
+			
+			for i in self.players:
+				if self.players[i].alive:
+					g[self.players[i].position[0]][self.players[i].position[1]] = "X"
+					
+			for i in self.bombs:
+				g[i[0]][i[1]] = "B"
+						
+			# for i in self.explosions:
+				# g[i[0]][i[1]] = "*"
+				
+			print "-" * ((self.cols * 2) - 1)
+			for j in g:
+				s = " ".join(j)
+				print s
+			print "-" * ((self.cols * 2) - 1)
