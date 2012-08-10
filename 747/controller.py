@@ -1,5 +1,5 @@
 from bomberman import read_line, print_map, print_players, send_action, send_message
-import ramdom
+import random
 
 class controller:
 
