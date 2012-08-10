@@ -1,3 +1,41 @@
+from copy import deepcopy
+
+def print_map(map, players=[], bombs=[]):
+
+    playermap = deepcopy(map)
+    bombmap = deepcopy(map)
+    p = []
+    b = []
+    
+    for i in players:
+        row = players[i][0][0]
+        col = players[i][0][1]
+        playermap[row][col] = "X"
+        
+    for i in bombs:
+        row = i[0][0]
+        col = i[0][1]        
+        bombmap[row][col] = "B"
+    
+    for i in playermap:
+        p.append(' '.join(i))
+    
+    
+    for i in bombmap:
+        b.append(' '.join(i))
+    
+    for i in range(len(p)):
+        print p[i], "   ", b[i]
+    
+    print ""
+        
+def print_players(players):
+
+    for i in players:
+        print "Player:", i
+        print "Location: [%s, %s]" % (players[i][0][0], players[i][0][1])
+        print "Status: Alive\n" if players[i][1] else "Status: Dead\n"
+
 def read_line(s):
     str = ''
     
@@ -11,7 +49,10 @@ def read_line(s):
             
     return str
     
-def print_map(map, players=[], bombs=[]):
+def send_action(s, action):
+    if action != None:
+        send_message(s, "ACTION %s" % action) 
     
-    for i in map:
-        print ' '.join(i)
+def send_message(s, message):
+    if message != None or message != '':
+        s.send(message)

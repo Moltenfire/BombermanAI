@@ -18,7 +18,7 @@ while 1:
     data = read_line(s)
     print "Server:", data
     if data == "INIT":
-        print "\nNew Game\n"
+        print "\n--- New Game ---\n"
         c = controller.controller(s)
         c.start()
         sys.exit()
