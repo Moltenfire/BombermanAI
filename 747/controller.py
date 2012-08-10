@@ -1,4 +1,5 @@
 from bomberman import read_line, print_map, print_players, send_action, send_message
+import ramdom
 
 class controller:
 
@@ -122,7 +123,7 @@ class controller:
                 return False
                 
     def get_move(self):
-        send_action(s, "BOMB")
+        send_action(self.s, "BOMB")
             
         
         

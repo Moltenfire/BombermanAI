@@ -1,4 +1,4 @@
-import copy, random, socket, sys
+import socket, sys
 import controller
 from bomberman import read_line
         
