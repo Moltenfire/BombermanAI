@@ -18,11 +18,13 @@ def print_map(map, players=[], bombs=[]):
         bombmap[row][col] = "B"
     
     for i in playermap:
-        p.append(' '.join(i))
+        # p.append(' '.join(i))
+        p.append(''.join(i))
     
     
     for i in bombmap:
-        b.append(' '.join(i))
+        # b.append(' '.join(i))
+        b.append(''.join(i))
     
     for i in range(len(p)):
         print p[i], "   ", b[i]

@@ -2,7 +2,8 @@ import socket, sys
 import controller
 from bomberman import read_line
         
-TCP_IP = 'uwcs.co.uk'
+# TCP_IP = 'uwcs.co.uk'
+TCP_IP = '127.0.0.1'
 TCP_PORT = 8037
 BUFFER_SIZE = 1024	
 
