@@ -1,32 +1,38 @@
-from bomberman import read_line, print_map, print_players, send_action, send_message
+﻿from bomberman import read_line, print_map, print_players, send_action, send_message
 import random
 
 class controller:
 
     def __init__(self, s):
         self.account = "747"
-        self.password = "747"
+        self.password = "747"   
+        # self.account = "火"
+        # self.password = "fire"
         self.s = s
         self.map = []    
         self.players = {}   # {'name': [[row, col], alive], }
         self.bombs = []     # [[[row, col], time], ]
         self.bomb_num = 0
         
-    def start(self):
         # register for current game
+    def start(self):
         if self.register():
             
             
             # Get Map
             self.get_map()
+            
+            print_map(self.map, self.players, self.bombs)
                         
             # Get Players
             self.get_players()
-
-            print_map(self.map, self.players)
+            
             print_players(self.players)
             
             self.main()
+            
+            # while True:
+                # print read_line(self.s)
         
     def register(self):
         str = ' '.join(['REGISTER', self.account, self.password])
@@ -55,12 +61,17 @@ class controller:
         for i in range(num):
             p = read_line(self.s).split()
             self.players[p[0]] = [[int(p[1]), int(p[2])], True]
-            
-            
+                    
     def main(self):
-        while True:
+    
+        self.get_move()
+        playing = True
+    
+        while playing:
             data = read_line(self.s).split()
+            # print "Data:", data
             if data[0] == "END":
+                playing = False
                 break
             elif data[0] == "TICK":
                 
@@ -72,11 +83,27 @@ class controller:
                     action = read_line(self.s).split()
                     self.perform_action(action)
                 
-                print_map(self.map, self.players)
+                print_map(self.map, self.players, self.bombs)
                 print_players(self.players)
                 
+                self.tick_Bombs()
+                
                 self.get_move()
-
+            elif data[0] == "DEAD":
+                print "DEAD", data[1]
+                
+                for i in range(int(data[1])):
+                    x = read_line(self.s).split()
+                    print x
+             
+            elif data[0] == "LEFT" or data[0] == "RIGHT" or data[0] == "UP" or data[0] == "DOWN" or data[0] == "BOMB":
+                print "Action accepted:", data[0]
+                
+            else:
+                print "Error:", data
+                print_map(self.map, self.players, self.bombs)                
+                
+        print "\n--- Game End ---\n"
 
     def perform_action(self, action):
         name = action[0]
@@ -107,7 +134,6 @@ class controller:
             if col != 0 and self.wall_check(row, col + 1):
                 self.players[name][0][1] += 1
               
-                
     def wall_check(self, row, col):
         if col < 0 or col >= self.cols or row < 0 or row >= self.rows:
             print "At Wall"
@@ -122,8 +148,22 @@ class controller:
             else:
                 return False
                 
+    def tick_Bombs(self):
+        for i in self.bombs:
+            print i[0]
+            print i[1], "\n"
+            i[1] -= 1
+            if i[1] == 0:
+                print "BOOM!"
+            self.bombs.remove(i)
+            
+    def explode(self, row, col):
+        pass
+        
+    
     def get_move(self):
-        send_action(self.s, "BOMB")
+        actions = ["LEFT", "RIGHT", "UP", "DOWN"]
+        send_action(self.s, random.choice(actions))
             
         
         

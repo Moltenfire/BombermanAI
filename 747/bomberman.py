@@ -1,4 +1,4 @@
-from copy import deepcopy
+﻿from copy import deepcopy
 
 def print_map(map, players=[], bombs=[]):
 
@@ -18,13 +18,13 @@ def print_map(map, players=[], bombs=[]):
         bombmap[row][col] = "B"
     
     for i in playermap:
-        # p.append(' '.join(i))
-        p.append(''.join(i))
+        # p.append(''.join(i))
+        p.append(''.join(i).replace("_"," "))
     
     
     for i in bombmap:
-        # b.append(' '.join(i))
-        b.append(''.join(i))
+        # b.append(''.join(i))
+        b.append(''.join(i).replace("_"," "))
     
     for i in range(len(p)):
         print p[i], "   ", b[i]
@@ -34,9 +34,9 @@ def print_map(map, players=[], bombs=[]):
 def print_players(players):
 
     for i in players:
-        print "Player:", i
+        print "Player:  ", i
         print "Location: [%s, %s]" % (players[i][0][0], players[i][0][1])
-        print "Status: Alive\n" if players[i][1] else "Status: Dead\n"
+        print "Status  : Alive\n" if players[i][1] else "Status  : Dead\n"
 
 def read_line(s):
     str = ''
