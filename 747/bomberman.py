@@ -1,6 +1,6 @@
 ﻿from copy import deepcopy
 
-def print_map(map, players=[], bombs=[]):
+def print_map(map, players=[], bombs=[], exp = []):
 
     playermap = deepcopy(map)
     bombmap = deepcopy(map)
@@ -16,6 +16,9 @@ def print_map(map, players=[], bombs=[]):
         row = i[0][0]
         col = i[0][1]        
         bombmap[row][col] = "B"
+        
+    for i in exp:
+        bombmap[i[0]][i[1]] = "$"
     
     for i in playermap:
         # p.append(''.join(i))

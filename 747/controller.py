@@ -12,10 +12,17 @@ class controller:
         self.map = []    
         self.players = {}   # {'name': [[row, col], alive], }
         self.bombs = []     # [[[row, col], time], ]
+        self.explosions = [] # [[row, col], ]
         self.bomb_num = 0
+        self.bombs_to_explode = []
         
-        # register for current game
+        #AI variables
+        self.current_state = "0" # 0 = Start, 
+        self.current_target = [] # [row, col]
+        self.current_path = [] # List of instuctions.
+        
     def start(self):
+        # register for current game
         if self.register():
             
             
@@ -30,10 +37,7 @@ class controller:
             print_players(self.players)
             
             self.main()
-            
-            # while True:
-                # print read_line(self.s)
-        
+                   
     def register(self):
         str = ' '.join(['REGISTER', self.account, self.password])
         print str
@@ -83,7 +87,8 @@ class controller:
                     action = read_line(self.s).split()
                     self.perform_action(action)
                 
-                print_map(self.map, self.players, self.bombs)
+                print_map(self.map, self.players, self.bombs, self.explosions)
+                self.explosions = []
                 print_players(self.players)
                 
                 self.tick_Bombs()
@@ -101,7 +106,8 @@ class controller:
                 
             else:
                 print "Error:", data
-                print_map(self.map, self.players, self.bombs)                
+                print_map(self.map, self.players, self.bombs, self.explosions)    
+                self.explosions = []
                 
         print "\n--- Game End ---\n"
 
@@ -150,22 +156,147 @@ class controller:
                 
     def tick_Bombs(self):
         for i in self.bombs:
-            print i[0]
-            print i[1], "\n"
+            # print i[0]
+            # print i[1] - 1, "\n"
             i[1] -= 1
             if i[1] == 0:
-                print "BOOM!"
-            self.bombs.remove(i)
+                # print "BOOM!"
+                
+                self.explode(i)
+                
+        if len(self.bombs_to_explode) != 0:
+            self.explode(self.bombs_to_explode[0])
             
-    def explode(self, row, col):
-        pass
+    def explode(self, bomb):
+        row = bomb[0][0]
+        col = bomb[0][1]
+        e = [[row,col]]
+        try:
+            self.bombs.remove(bomb)            
+        except:
+            self.bombs_to_explode.remove(bomb)
+            
+        hit_bombs = []
+        
+        #Up
+        for i in range(1,4):
+            x = row - i
+            if x < 0:
+                break
+            else:
+                m = self.map[x][col]
+                
+            if m == "#":
+                break
+            elif m == "+":
+                self.map[x][col] = "_"
+                e.append([x,col])
+                break
+            else:
+                e.append([x,col])        
+                
+        #Down
+        for i in range(1,4):
+            x = row + i
+            if x >= self.rows:
+                break
+            else:
+                m = self.map[x][col]
+                
+            if m == "#":
+                break
+            elif m == "+":
+                self.map[x][col] = "_"
+                e.append([x,col])
+                break
+            else:
+                e.append([x,col])
+                
+        #Left
+        for i in range(1,4):
+            x = col - i
+            if x < 0:
+                break
+            else:
+                m = self.map[row][x]
+                
+            if m == "#":
+                break
+            elif m == "+":
+                self.map[row][x] = "_"
+                e.append([row,x])
+                break
+            else:
+                e.append([row,x])
+                
+        #Down
+        for i in range(1,4):
+            x = col + i
+            if x >= self.cols:
+                break
+            else:
+                m = self.map[row][x]
+                
+            if m == "#":
+                break
+            elif m == "+":
+                self.map[row][x] = "_"
+                e.append([row,x])
+                break
+            else:
+                e.append([row,x])
+                
+                
+        print e
+        
+        for i in e:
+            for j in self.bombs:
+                if i[0] == j[0][0] and i[1] == j[0][1]:
+                    hit_bombs.append(j)
+                    self.bombs.remove(j)
+        
+        self.explosions.extend(e)
+        self.bombs_to_explode.extend(hit_bombs)
         
     
     def get_move(self):
         actions = ["LEFT", "RIGHT", "UP", "DOWN"]
         send_action(self.s, random.choice(actions))
-            
         
         
-    
-             
+class point_map:
+
+    def __init__(self, map, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        
+        
+        
+class point:
+
+    def __init__(self, row, col, block):
+        self.north = None
+        self.south = None
+        self.east = None
+        self.west = None
+        self.row = row
+        self.col = col
+        self.block = block
+        self.bomb = None
+        self.person = None
+        
+    def set_relations(self, N, S, E, W):
+        self.north = N
+        self.south = S
+        self.east = E
+        self.west = W
+        
+    def explode(self):
+        if block == "+":
+            block = "_"
+            return 0
+        elif block = "#":
+            return 0
+        else:
+            return 1
+        

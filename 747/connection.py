@@ -22,4 +22,4 @@ while 1:
         print "\n--- New Game ---\n"
         c = controller.controller(s)
         c.start()
-        # sys.exit()
+        sys.exit()

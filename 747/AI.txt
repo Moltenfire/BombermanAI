@@ -1,0 +1,9 @@
+0 Start state. Create better version of map. Find first target. Find best route. (Shortest) Choose place bomb. -> 1
+1 Go to block plant bomb -> 2
+2 Get to safe location ->
+3 Wait -> 0
+
+
+Always active.
+
+Avoid explosions alway stay in safe location 
